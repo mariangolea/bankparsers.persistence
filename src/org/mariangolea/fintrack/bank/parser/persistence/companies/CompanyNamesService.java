@@ -1,4 +1,4 @@
-package org.mariangolea.fintrack.bank.parser.persistence.repository.companies;
+package org.mariangolea.fintrack.bank.parser.persistence.companies;
 
 import java.util.ArrayList;
 import java.util.Collection;

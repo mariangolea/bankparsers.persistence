@@ -1,14 +1,15 @@
-package org.mariangolea.fintrack.bank.parser.persistence.repository.companies;
+package org.mariangolea.fintrack.bank.parser.persistence.companies;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
-import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.Test;
-import org.mariangolea.fintrack.bank.parser.persistence.repository.BaseDataJPATest;
+import org.mariangolea.fintrack.bank.parser.persistence.BaseDataJPATest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -24,7 +25,6 @@ public class CompanyNamesServiceTest extends BaseDataJPATest {
 	
 	@Autowired
 	private CompanyNameRepository namesRepo;
-	
 	
 	@Test
 	public void testGetAllCompanyIdentifierStrings() {
@@ -87,8 +87,7 @@ public class CompanyNamesServiceTest extends BaseDataJPATest {
 	@Test
 	public void testGeCompanyDisplayName() {
 		String preexisting = service.getCompanyDisplayName("Aloha");
-		assertNotNull(preexisting);
-		assertTrue(preexisting.isEmpty());
+		assertNull(preexisting);
 		
 		CompanyName name = new CompanyName();
 		name.setName("Aloha");
@@ -96,13 +95,14 @@ public class CompanyNamesServiceTest extends BaseDataJPATest {
 		toAdd.setName("Aloha Identifier");
 		toAdd.setCompanyName(name);
 		idRepo.save(toAdd);
-		name.setIdentifiers(Arrays.asList(toAdd));
+		Collection<CompanyIdentifier> identifiers = new ArrayList<>();
+		identifiers.add(toAdd);
+		name.setIdentifiers(identifiers);
 		namesRepo.save(name);
 		
-		//one transaction will most likely only have one single company identifier string, not two...
-		preexisting = service.getMatchingIdentifierStrings("Pre AlohaParent Meloha Post Transaction description");
+		preexisting = service.getCompanyDisplayName("Aloha Identifier");
 		assertNotNull(preexisting);
-		assertEquals(2, preexisting.size());
+		assertEquals("Aloha", preexisting);
 	}
 
 }

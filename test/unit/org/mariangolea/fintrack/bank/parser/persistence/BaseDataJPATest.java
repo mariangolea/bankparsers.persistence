@@ -1,4 +1,4 @@
-package org.mariangolea.fintrack.bank.parser.persistence.repository;
+package org.mariangolea.fintrack.bank.parser.persistence;
 
 import java.util.Optional;
 
@@ -9,8 +9,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @DataJpaTest
 @EnableAutoConfiguration
-@EnableJpaRepositories("org.mariangolea.fintrack.bank.parser.persistence.repository.*")
-@EntityScan("org.mariangolea.fintrack.bank.*")
+@EnableJpaRepositories("org.mariangolea.fintrack.bank.parser.persistence.*")
+@EntityScan("org.mariangolea.fintrack.bank.parser.persistence.*")
 public class BaseDataJPATest {
 
 	

@@ -1,4 +1,4 @@
-package org.mariangolea.fintrack.bank.parser.persistence.repository.companies;
+package org.mariangolea.fintrack.bank.parser.persistence.companies;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -6,6 +6,7 @@ import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,59 +15,64 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "companynames")
-public class CompanyName implements Serializable{
+public class CompanyName implements Serializable {
 	private static final long serialVersionUID = 8119331797537769458L;
 
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
-    
-    @Column(name = "display_name", unique=true, nullable = false)
-    private String name;
-    
-    @OneToMany(cascade = CascadeType.ALL)
-    private Collection<CompanyIdentifier> identifiers;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
+	private Long id;
 
-    public CompanyName() {
-    }
+	@Column(name = "display_name", unique = true, nullable = false)
+	private String name;
 
-    public CompanyName(Long id, String name, Collection<CompanyIdentifier> identifiers) {
-        this.id = id;
-        this.name = Objects.requireNonNull(name);
-        this.identifiers = identifiers;
-    }
+	@OneToMany(
+			cascade = CascadeType.ALL, 
+			mappedBy = "companyName", 
+			orphanRemoval = true,
+			fetch = FetchType.LAZY
+			)
+	private Collection<CompanyIdentifier> identifiers;
 
-    public String getName() {
-        return name;
-    }
+	public CompanyName() {
+	}
 
-    public void setName(String name) {
-        this.name = Objects.requireNonNull(name);
-    }
+	public CompanyName(Long id, String name, Collection<CompanyIdentifier> identifiers) {
+		this.id = id;
+		this.name = Objects.requireNonNull(name);
+		this.identifiers = identifiers;
+	}
 
-    public Collection<CompanyIdentifier> getIdentifiers() {
-        return identifiers;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setIdentifiers(Collection<CompanyIdentifier> identifiers) {
-        this.identifiers = identifiers;
-    }
+	public void setName(String name) {
+		this.name = Objects.requireNonNull(name);
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public Collection<CompanyIdentifier> getIdentifiers() {
+		return identifiers;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public void setIdentifiers(Collection<CompanyIdentifier> identifiers) {
+		this.identifiers = identifiers;
+	}
 
-    @Override
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	@Override
 	public int hashCode() {
 		return Objects.hash(id, identifiers, name);
 	}
 
-    @Override
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -80,8 +86,8 @@ public class CompanyName implements Serializable{
 	}
 
 	@Override
-    public String toString() {
-    	String identifiersString = identifiers == null ? "null" : identifiers.toString();
-        return "CompanyName{" + "name=" + name + ", identifier=" + identifiersString + '}';
-    }
+	public String toString() {
+		String identifiersString = identifiers == null ? "null" : identifiers.toString();
+		return "CompanyName{" + "name=" + name + ", identifier=" + identifiersString + '}';
+	}
 }

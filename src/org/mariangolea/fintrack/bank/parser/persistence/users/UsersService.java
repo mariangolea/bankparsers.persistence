@@ -1,4 +1,4 @@
-package org.mariangolea.fintrack.bank.parser.persistence.repository.users;
+package org.mariangolea.fintrack.bank.parser.persistence.users;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,11 +1,11 @@
-package org.mariangolea.fintrack.bank.parser.persistence.repository.category;
+package org.mariangolea.fintrack.bank.parser.persistence.category;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-import org.mariangolea.fintrack.bank.parser.persistence.repository.categories.Category;
+import org.mariangolea.fintrack.bank.parser.persistence.categories.Category;
 
 import com.google.common.base.Objects;
 

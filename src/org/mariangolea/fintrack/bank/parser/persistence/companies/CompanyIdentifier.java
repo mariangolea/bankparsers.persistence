@@ -1,12 +1,16 @@
-package org.mariangolea.fintrack.bank.parser.persistence.repository.companies;
+package org.mariangolea.fintrack.bank.parser.persistence.companies;
 
 import java.io.Serializable;
 import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -22,9 +26,10 @@ public class CompanyIdentifier implements Serializable {
     @Column(name = "identifier", unique=true, nullable = false)
     private String name;
     
-    @Column(name="company_name")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "company_name")
     private CompanyName companyName;
-
+    
     public CompanyIdentifier() {
     }
 

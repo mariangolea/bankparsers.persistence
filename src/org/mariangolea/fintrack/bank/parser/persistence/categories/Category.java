@@ -1,4 +1,4 @@
-package org.mariangolea.fintrack.bank.parser.persistence.repository.categories;
+package org.mariangolea.fintrack.bank.parser.persistence.categories;
 
 import java.io.Serializable;
 import java.util.Objects;
