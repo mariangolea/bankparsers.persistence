@@ -24,7 +24,7 @@
 	</parent>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
-		<testSourceDirectory>test/unit</testSourceDirectory>
+		<testSourceDirectory>test</testSourceDirectory>
 		<plugins>
 			<plugin>
 				<groupId>org.jacoco</groupId>
