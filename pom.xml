@@ -29,7 +29,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.6</version>
+				<version>0.8.7</version>
 				<configuration>
 					<append>true</append>
 				</configuration>
@@ -58,8 +58,18 @@
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
-					<forkCount>0</forkCount>
+					<argLine>${argLine} -Xmx2048m</argLine>
+					<reuseForks>false</reuseForks>
 				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.maven.surefire</groupId>
+						<artifactId>surefire-logger-api</artifactId>
+						<version>2.21.0</version>
+						<!-- to get around bug https://github.com/junit-team/junit5/issues/1367 -->
+						<optional>true</optional>
+					</dependency>
+				</dependencies>
 			</plugin>
 			<plugin>
 				<artifactId>maven-failsafe-plugin</artifactId>
