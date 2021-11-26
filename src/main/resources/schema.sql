@@ -5,11 +5,11 @@ CREATE TABLE IF NOT EXISTS transactiontexts (
 
 CREATE TABLE IF NOT EXISTS transactions (
   id LONG AUTO_INCREMENT  PRIMARY KEY,
-  start_date DATE NOT NULL,
-  completed_date DATE NOT NULL,
+  started_date DATETIME NOT NULL,
+  completed_date DATETIME NOT NULL,
   credit_amount DECIMAL NOT NULL,
   debit_amount DECIMAL NOT NULL,
-  description VARCHAR(250) DEFAULT NULL,
+  description VARCHAR(1000) DEFAULT NULL,
   original_content_id LONG NOT NULL,
   FOREIGN KEY (original_content_id) REFERENCES transactiontexts(id)
 );
