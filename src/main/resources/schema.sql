@@ -32,16 +32,17 @@ CREATE TABLE IF NOT EXISTS categories (
   parent_id LONG
 );
 
-CREATE TABLE IF NOT EXISTS users (
-  id LONG AUTO_INCREMENT  PRIMARY KEY,
-  user_name VARCHAR(250) NOT NULL,
-  password VARCHAR(250) NOT NULL
-);
-
 CREATE TABLE IF NOT EXISTS userpreferences (
   id LONG AUTO_INCREMENT  PRIMARY KEY,
   time_frame INT NOT NULL,
   input_folder TEXT NOT NULL,
-  user_id LONG UNIQUE,
-  FOREIGN KEY (user_id ) REFERENCES users(id)
+  page_size INT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS users (
+  id LONG AUTO_INCREMENT  PRIMARY KEY,
+  user_name VARCHAR(250) NOT NULL,
+  password VARCHAR(250) NOT NULL,
+  preferences_id LONG UNIQUE,
+  FOREIGN KEY (preferences_id) REFERENCES userpreferences(id)
 );

@@ -2,6 +2,7 @@ package org.mariangolea.fintrack.bank.parser.persistence.users;
 
 import java.io.Serializable;
 import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,85 +17,86 @@ public class UserPreferences implements Serializable {
 	private static final long serialVersionUID = 4737913401569904628L;
 
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
+	private Long id;
 
-    @Column(name = "time_frame")
-    private Integer timeFrameInterval;
+	@Column(name = "time_frame", nullable = false)
+	private Integer timeFrameInterval;
 
-    @Column(name = "input_folder")
-    private String inputFolder;
-    
-    public UserPreferences() {
-    }
+	@Column(name = "input_folder", nullable = false)
+	private String inputFolder;
 
-    public UserPreferences(Integer timeFrameInterval, String inputFolder) {
-        this.timeFrameInterval = timeFrameInterval;
-        this.inputFolder = inputFolder;
-    }
+	@Column(name = "page_size", nullable = false)
+	private Integer pageSize;
+	
+	public UserPreferences() {
+		this(null, null, null);
+	}
 
-    public UserPreferences(Long id, Integer timeFrameInterval, String inputFolder) {
-        this(timeFrameInterval, inputFolder);
-        this.id = id;
-    }
+	public UserPreferences(Integer timeFrameInterval, String inputFolder, Integer pageSize) {
+		this.timeFrameInterval = adjustInteger(timeFrameInterval, 1);
+		this.inputFolder = adjustString(inputFolder);
+		this.pageSize = adjustInteger(pageSize, 50);
+	}
 
-    public Integer getTimeFrameInterval() {
-        return timeFrameInterval;
-    }
+	public Integer getTimeFrameInterval() {
+		return timeFrameInterval;
+	}
 
-    public void setTimeFrameInterval(Integer timeFrameInterval) {
-        this.timeFrameInterval = timeFrameInterval;
-    }
+	public void setTimeFrameInterval(Integer timeFrameInterval) {
+		this.timeFrameInterval = adjustInteger(timeFrameInterval, 1);
+	}
 
-    public String getInputFolder() {
-        return inputFolder;
-    }
+	public String getInputFolder() {
+		return inputFolder;
+	}
 
-    public void setInputFolder(String inputFolder) {
-        this.inputFolder = inputFolder;
-    }
+	public void setInputFolder(String inputFolder) {
+		this.inputFolder = adjustString(inputFolder);
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 61 * hash + Objects.hashCode(this.id);
-        hash = 61 * hash + Objects.hashCode(this.timeFrameInterval);
-        hash = 61 * hash + Objects.hashCode(this.inputFolder);
-        return hash;
-    }
+	public int getPageSize() {
+		return pageSize;
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final UserPreferences other = (UserPreferences) obj;
-        if (!Objects.equals(this.inputFolder, other.inputFolder)) {
-            return false;
-        }
-        if (!Objects.equals(this.id, other.id)) {
-            return false;
-        }
-        if (!Objects.equals(this.timeFrameInterval, other.timeFrameInterval)) {
-            return false;
-        }
-        return true;
-    }
+	public void setPageSize(Integer pageSize) {
+		this.pageSize = adjustInteger(pageSize, 50);
+	}
 
-    @Override
-    public String toString() {
-        return "UserPreferences{" + "timeFrameInterval=" + timeFrameInterval + ", inputFolder=" + inputFolder + '}';
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hash(inputFolder, pageSize, timeFrameInterval);
+	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		UserPreferences other = (UserPreferences) obj;
+		return Objects.equals(inputFolder, other.inputFolder) && Objects.equals(pageSize, other.pageSize)
+				&& Objects.equals(timeFrameInterval, other.timeFrameInterval);
+	}
+
+	@Override
+	public String toString() {
+		return "UserPreferences{" + "timeFrameInterval=" + timeFrameInterval + ", inputFolder=" + inputFolder
+				+ ", pageSize=" + pageSize + '}';
+	}
+
+	private Integer adjustInteger(Integer value, Integer defaultValue) {
+		return value == null ? defaultValue : value;
+	}
+	
+	private String adjustString(String value) {
+		return value == null ? "" : value;
+	}
 }

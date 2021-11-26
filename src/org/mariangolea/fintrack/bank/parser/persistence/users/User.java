@@ -2,12 +2,14 @@ package org.mariangolea.fintrack.bank.parser.persistence.users;
 
 import java.io.Serializable;
 import java.util.Objects;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -28,21 +30,18 @@ public class User implements Serializable {
     @Column(name = "password")
     private String password;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "preferences_id")
+	@OneToOne(cascade = CascadeType.ALL)
     private UserPreferences preferences;
 
     public User() {
+    	this(null, null, null);
     }
 
     public User(String name, String password, UserPreferences preferences) {
-        this.name = name;
-        this.password = password;
+        this.name = adjustString(name);
+        this.password = adjustString(password);
         this.preferences = preferences;
-    }
-
-    public User(final Long id, String name, String password, UserPreferences preferences) {
-        this(name, password, preferences);
-        this.id = id;
     }
 
     public String getName() {
@@ -50,7 +49,7 @@ public class User implements Serializable {
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name = adjustString(name);
     }
 
     public String getPassword() {
@@ -58,7 +57,7 @@ public class User implements Serializable {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.password = adjustString(password);
     }
 
     public UserPreferences getPreferences() {
@@ -104,14 +103,15 @@ public class User implements Serializable {
         if (!Objects.equals(this.name, other.name)) {
             return false;
         }
-        if (!Objects.equals(this.preferences, other.preferences)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.preferences, other.preferences);
     }
 
     @Override
     public String toString() {
         return "User{" + "name=" + name + ", password=" + password + ", preferences=" + preferences + '}';
+    }
+    
+    private String adjustString(String input) {
+    	return input == null ? "" : input;
     }
 }
