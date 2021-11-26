@@ -4,9 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.jupiter.api.Test;
+import java.util.Objects;
 
-import com.google.common.base.Objects;
+import org.junit.jupiter.api.Test;
 
 public class UserPreferencesTest {
 	
@@ -57,13 +57,13 @@ public class UserPreferencesTest {
 		int hash1 = test1.hashCode();
 
 		assertFalse(hash == hash1);
-		assertFalse(Objects.equal(test, test1));
+		assertFalse(Objects.equals(test, test1));
 		assertTrue(test.equals(test));
 		assertFalse(test.equals(null));
 		assertFalse(test.equals("Aloha"));
 
 		test1.setPageSize(2);
-		assertTrue(Objects.equal(test, test1));
+		assertTrue(Objects.equals(test, test1));
 	}
 
 	@Test

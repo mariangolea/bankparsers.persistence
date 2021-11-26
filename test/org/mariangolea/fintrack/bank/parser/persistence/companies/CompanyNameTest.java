@@ -6,10 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.junit.jupiter.api.Test;
-
-import com.google.common.base.Objects;
 
 public class CompanyNameTest {
 	@Test
@@ -70,21 +69,21 @@ public class CompanyNameTest {
 		int hash1 = cat1.hashCode();
 
 		assertFalse(hash == hash1);
-		assertFalse(Objects.equal(cat, cat1));
+		assertFalse(Objects.equals(cat, cat1));
 		assertTrue(cat.equals(cat));
 		assertFalse(cat.equals(null));
 		assertFalse(cat.equals("Aloha"));
 
 		cat1.setName("Aloha");
 		cat1.setId(2L);
-		assertFalse(Objects.equal(cat, cat1));
+		assertFalse(Objects.equals(cat, cat1));
 
 		cat1.setId(2L);
 		cat.setId(2L);
 		list = new ArrayList<>();
 		list.add(new CompanyIdentifier("Aba", null));
 		cat1.setIdentifiers(list);
-		assertFalse(Objects.equal(cat, cat1));
+		assertFalse(Objects.equals(cat, cat1));
 	}
 
 	@Test

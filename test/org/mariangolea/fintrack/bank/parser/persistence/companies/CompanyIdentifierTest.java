@@ -4,9 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.jupiter.api.Test;
+import java.util.Objects;
 
-import com.google.common.base.Objects;
+import org.junit.jupiter.api.Test;
 
 public class CompanyIdentifierTest {
 	@Test
@@ -59,19 +59,19 @@ public class CompanyIdentifierTest {
 		int hash1 = cat1.hashCode();
 
 		assertFalse(hash == hash1);
-		assertFalse(Objects.equal(cat, cat1));
+		assertFalse(Objects.equals(cat, cat1));
 		assertTrue(cat.equals(cat));
 		assertFalse(cat.equals(null));
 		assertFalse(cat.equals("Aloha"));
 
 		cat1.setName("Aloha");
 		cat1.setId(2L);
-		assertFalse(Objects.equal(cat, cat1));
+		assertFalse(Objects.equals(cat, cat1));
 
 		cat1.setId(2L);
 		cat.setId(2L);
 		cat1.setCompanyName(new CompanyName(null, "Ab", null));
-		assertFalse(Objects.equal(cat, cat1));
+		assertFalse(Objects.equals(cat, cat1));
 	}
 
 	@Test
