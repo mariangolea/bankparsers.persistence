@@ -82,14 +82,19 @@ public class BankTransactionTest {
 
 	@Test
 	void testEquals() {
+		Date date = new Date();
 		BankTransaction first = new BankTransaction();
 		
 		assertEquals(first, first);
 		assertNotEquals(first, null);
 		assertNotEquals(first, new BankTransactionText());
 		
+		first.setStartDate(date);
+		first.setCompletedDate(date);
 		BankTransaction second = new BankTransaction();
-		assertFalse(first.equals(second));
+		second.setStartDate(date);
+		second.setCompletedDate(date);
+		assertTrue(first.equals(second));
 		
 		first.setCompletedDate(second.getCompletedDate());
 		first.setDescription("");
