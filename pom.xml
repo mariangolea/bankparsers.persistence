@@ -155,7 +155,7 @@
 		<repository>
 			<id>github</id>
 			<name>GitHub Marian Golea Apache Maven Packages</name>
-			<url>https://maven.pkg.github.com/mariangolea/familybudget.desktop</url>
+			<url>https://maven.pkg.github.com/mariangolea/bankparsers.persistence</url>
 		</repository>
 	</distributionManagement>
 
