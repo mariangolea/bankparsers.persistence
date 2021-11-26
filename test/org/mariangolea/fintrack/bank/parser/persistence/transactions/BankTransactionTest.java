@@ -102,9 +102,15 @@ public class BankTransactionTest {
 
 	@Test
 	void testHash() {
+		Date date = new Date();
 		BankTransaction first = new BankTransaction();
-		int hashCode = first.hashCode();
-		assertEquals(hashCode, new BankTransaction().hashCode());
+		first.setStartDate(date);
+		first.setCompletedDate(date);
+		
+		BankTransaction second = new BankTransaction();
+		second.setStartDate(date);
+		second.setCompletedDate(date);
+		assertEquals(first.hashCode(), second.hashCode());
 	}
 
 	@Test
