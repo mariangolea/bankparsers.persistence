@@ -77,14 +77,16 @@ public class BankTransaction implements Serializable, Comparable<BankTransaction
 
 	public BankTransaction(final Collection<String> fileContent) {
 		this();
-		StringBuilder content = new StringBuilder();
-		for (String line : fileContent) {
-			content.append(line).append(LINE_DELIMITER);
-			contentLines++;
-		}
 		BankTransactionText text = new BankTransactionText();
-		text.setOriginalContent(content.substring(0, content.length() - LINE_DELIMITER.length()));
 		this.originalContent = text;
+		if (fileContent != null && !fileContent.isEmpty()) {
+			StringBuilder content = new StringBuilder();
+			for (String line : fileContent) {
+				content.append(line).append(LINE_DELIMITER);
+				contentLines++;
+			}
+			text.setOriginalContent(content.substring(0, content.length() - LINE_DELIMITER.length()));
+		}
 	}
 
 	@Override
