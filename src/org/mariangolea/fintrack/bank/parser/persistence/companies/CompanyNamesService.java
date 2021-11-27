@@ -32,7 +32,7 @@ public class CompanyNamesService {
 		CompanyName sample = new CompanyName();
 		sample.setName(companyDisplayName);
 		Optional<CompanyName> match = companyNamesRepo.findOne(Example.of(sample));
-		return match.isEmpty() ? Collections.emptyList() : match.get().getIdentifiers();
+		return !match.isPresent() ? Collections.emptyList() : match.get().getIdentifiers();
 	}
 
 	/**
@@ -65,7 +65,7 @@ public class CompanyNamesService {
 		CompanyIdentifier sample = new CompanyIdentifier();
 		sample.setName(companyIdentifier);
 		Optional<CompanyIdentifier> match = companyIdentifiersRepo.findOne(Example.of(sample));
-		return match.isEmpty() ? null : match.get().getCompanyName().getName();
+		return !match.isPresent() ? null : match.get().getCompanyName().getName();
 	}
 
 	public Collection<CompanyName> getCompanyDisplayNames() {

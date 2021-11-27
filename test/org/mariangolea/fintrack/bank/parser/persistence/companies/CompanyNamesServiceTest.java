@@ -3,6 +3,7 @@ package org.mariangolea.fintrack.bank.parser.persistence.companies;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -138,7 +139,7 @@ public class CompanyNamesServiceTest extends BaseDataJPATest {
 		name = new CompanyName();
 		name.setName("Aloha");
 		Optional<CompanyName> notFound = namesRepo.findOne(Example.of(new CompanyName()));
-		assertTrue(notFound.isEmpty());
+		assertFalse(notFound.isPresent());
 	}
 
 	@Test

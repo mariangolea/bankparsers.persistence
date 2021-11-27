@@ -79,7 +79,7 @@ public class CategoriesService {
 	}
 
 	private Category getCategory(Optional<Category> optional) {
-		if (optional == null || optional.isEmpty()) {
+		if (optional == null || !optional.isPresent()) {
 			return null;
 		}
 		return optional.get();

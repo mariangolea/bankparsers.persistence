@@ -15,7 +15,7 @@ public class BaseDataJPATest {
 
 	
 	protected <E> E get(Optional<E> optional) {
-		if (optional == null || optional.isEmpty()) {
+		if (optional == null || !optional.isPresent()) {
 			return null;
 		}
 		return optional.get();
