@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
+import org.mariangolea.fintrack.bank.parser.persistence.transaction.BankTransaction;
+import org.mariangolea.fintrack.bank.parser.persistence.transaction.BankTransactionText;
 
 public class BankTransactionTextTest {
 	@Test

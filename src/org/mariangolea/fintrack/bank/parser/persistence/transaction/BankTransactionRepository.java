@@ -1,4 +1,4 @@
-package org.mariangolea.fintrack.bank.parser.persistence.transactions;
+package org.mariangolea.fintrack.bank.parser.persistence.transaction;
 
 import java.util.Date;
 import java.util.List;

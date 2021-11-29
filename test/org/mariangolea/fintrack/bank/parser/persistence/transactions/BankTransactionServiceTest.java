@@ -10,6 +10,11 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.Test;
 import org.mariangolea.fintrack.bank.parser.persistence.BaseDataJPATest;
+import org.mariangolea.fintrack.bank.parser.persistence.transaction.BankTransaction;
+import org.mariangolea.fintrack.bank.parser.persistence.transaction.BankTransactionRepository;
+import org.mariangolea.fintrack.bank.parser.persistence.transaction.BankTransactionService;
+import org.mariangolea.fintrack.bank.parser.persistence.transaction.BankTransactionText;
+import org.mariangolea.fintrack.bank.transaction.BankTransactionInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -25,7 +30,7 @@ public class BankTransactionServiceTest extends BaseDataJPATest{
 	@Test
 	public void testGetAllCompanyIdentifierStrings() throws InterruptedException {
 		
-		List<BankTransaction> preexisting = service.getTransactions(new Date(1L), new Date(), 1, 20);
+		List<BankTransactionInterface> preexisting = service.getTransactions(new Date(1L), new Date(), 1, 20);
 		assertNotNull(preexisting);
 		assertTrue(preexisting.isEmpty());
 
@@ -48,7 +53,7 @@ public class BankTransactionServiceTest extends BaseDataJPATest{
 		BankTransaction irrellevantTwo = new BankTransaction(new BankTransactionText("Three"));
 		repo.save(irrellevantTwo);
 		
-		List<BankTransaction> transactions = service.getTransactions(startDate, endDate, 0, 10);
+		List<BankTransactionInterface> transactions = service.getTransactions(startDate, endDate, 0, 10);
 		assertNotNull(transactions);
 		assertEquals(2, transactions.size());
 	}

@@ -10,6 +10,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.Test;
 import org.mariangolea.fintrack.bank.parser.persistence.BaseDataJPATest;
+import org.mariangolea.fintrack.bank.parser.persistence.transaction.BankTransaction;
+import org.mariangolea.fintrack.bank.parser.persistence.transaction.BankTransactionRepository;
+import org.mariangolea.fintrack.bank.parser.persistence.transaction.BankTransactionText;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;

@@ -10,8 +10,6 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.mariangolea.fintrack.bank.parser.persistence.BaseDataJPATest;
-import org.mariangolea.fintrack.bank.parser.persistence.categories.CategoriesRepository;
-import org.mariangolea.fintrack.bank.parser.persistence.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.test.context.ContextConfiguration;
@@ -69,17 +67,14 @@ public class CategoryRepositoryTest extends BaseDataJPATest {
 	public void testFindByParent() {
 		Collection<Category> search = categoriesRepository.findByParent(null);
 		assertTrue(search.isEmpty());
-		Category toAdd = new Category();
-		toAdd.setName("Aloha");
-		categoriesRepository.save(toAdd);
-		Long id = toAdd.getId();
+		
+		Category parent = new Category("Aloha", null);
+		categoriesRepository.save(parent);
 
-		toAdd = new Category();
-		toAdd.setName("AlohaChild");
-		toAdd.setParent(id);
-		categoriesRepository.save(toAdd);
+		Category child = new Category("AlohaChild", parent);
+		categoriesRepository.save(child);
 
-		search = categoriesRepository.findByParent(id);
+		search = categoriesRepository.findByParent(parent);
 		assertEquals(1, search.size());
 		Category first = search.iterator().next();
 		assertEquals("AlohaChild", first.getName());

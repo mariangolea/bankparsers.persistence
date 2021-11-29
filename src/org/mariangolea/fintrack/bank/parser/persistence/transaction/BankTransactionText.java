@@ -1,4 +1,4 @@
-package org.mariangolea.fintrack.bank.parser.persistence.transactions;
+package org.mariangolea.fintrack.bank.parser.persistence.transaction;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -10,9 +10,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.mariangolea.fintrack.bank.transaction.BankTransactionTextInterface;
+
 @Entity
 @Table(name = "transactiontexts")
-public class BankTransactionText implements Serializable{
+public class BankTransactionText implements Serializable, BankTransactionTextInterface{
 
 	private static final long serialVersionUID = -717598296361745618L;
 
@@ -25,11 +27,15 @@ public class BankTransactionText implements Serializable{
     private String originalContent;
     
     public BankTransactionText() {
-    	this(null);
+    	this((String)null);
     }
 
     public BankTransactionText(String originalContent) {
         this.originalContent = originalContent;
+    }
+    
+    BankTransactionText(BankTransactionTextInterface text){
+    	this.originalContent = text == null ? null : text.getOriginalContent();
     }
 
     public String getOriginalContent() {

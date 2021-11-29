@@ -14,14 +14,18 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.Test;
+import org.mariangolea.fintrack.bank.parser.persistence.FintrackEntityBase;
+import org.mariangolea.fintrack.bank.parser.persistence.transaction.BankTransaction;
+import org.mariangolea.fintrack.bank.parser.persistence.transaction.BankTransactionText;
 
-public class BankTransactionTest {
+public class BankTransactionTest extends FintrackEntityBase{
 	@Test
 	void testEmptyConstructor() {
 		BankTransaction empty = new BankTransaction();
 		testEmptyConstructorFields(empty, 0);
 
-		assertNull(empty.getOriginalContent());
+		assertNotNull(empty.getOriginalContent());
+		assertNull(empty.getOriginalContent().getOriginalContent());
 	}
 
 	@Test

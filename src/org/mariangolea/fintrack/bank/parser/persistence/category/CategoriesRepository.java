@@ -1,4 +1,4 @@
-package org.mariangolea.fintrack.bank.parser.persistence.categories;
+package org.mariangolea.fintrack.bank.parser.persistence.category;
 
 import java.util.Collection;
 
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CategoriesRepository extends JpaRepository<Category, Long>{
     
-	Collection<Category> findByParent(Long parentId);
+	Collection<Category> findByParent(Category parent);
 	
 	Category findByName(String categoryName);
 }

@@ -29,7 +29,8 @@ CREATE TABLE IF NOT EXISTS companyidentifiers (
 CREATE TABLE IF NOT EXISTS categories (
   id LONG AUTO_INCREMENT  PRIMARY KEY,
   display_name VARCHAR(250) NOT NULL UNIQUE,
-  parent_id LONG
+  parent_id LONG,
+  FOREIGN KEY (parent_id) REFERENCES categories(id)
 );
 
 CREATE TABLE IF NOT EXISTS userpreferences (

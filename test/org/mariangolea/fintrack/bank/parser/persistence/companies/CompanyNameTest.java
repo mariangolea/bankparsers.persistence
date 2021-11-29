@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Objects;
 
 import org.junit.jupiter.api.Test;
+import org.mariangolea.fintrack.bank.parser.persistence.company.CompanyIdentifier;
+import org.mariangolea.fintrack.bank.parser.persistence.company.CompanyName;
 
 public class CompanyNameTest {
 	@Test

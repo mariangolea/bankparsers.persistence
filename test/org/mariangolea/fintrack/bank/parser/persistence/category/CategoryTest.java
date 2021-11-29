@@ -4,16 +4,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Objects;
 
 import org.junit.jupiter.api.Test;
-import org.mariangolea.fintrack.bank.parser.persistence.categories.Category;
 
 public class CategoryTest {
 
 	@Test
 	public void testConstructorAndAccessMethods() {
 		Category cat = null;
+		Category parent = createFullCategory();
 		try {
 			cat = new Category();
 		} catch (Exception e) {
@@ -21,29 +23,19 @@ public class CategoryTest {
 		}
 
 		try {
-			cat = new Category(null, null);
-			assertTrue(false);
-		} catch (Exception e) {
-			assertTrue(true);
-		}
-
-		try {
 			cat = new Category("Aloha", null);
-			cat = new Category("Aloha", 1L);
+			cat = new Category("Aloha", parent);
 		} catch (Exception e) {
 			assertTrue(false);
 		}
-
+		
 		assertEquals("Aloha", cat.getName());
-		assertEquals(1L, cat.getParent());
-		assertEquals(null, cat.getId());
+		assertEquals(parent, cat.getParent());
 
 		cat.setName("Alohaaa");
 		cat.setId(3L);
-		cat.setParent(2L);
 		assertEquals("Alohaaa", cat.getName());
-		assertEquals(2L, cat.getParent());
-		assertEquals(3L, cat.getId());
+		assertEquals(parent, cat.getParent());
 
 		try {
 			cat.setName(null);
@@ -55,10 +47,10 @@ public class CategoryTest {
 
 	@Test
 	public void testHashCodeAndEquals() {
-		Category cat = new Category("Aloha", 1L);
+		Category cat = new Category("Aloha", null);
 		int hash = cat.hashCode();
 
-		Category cat1 = new Category("Alohaa", 1L);
+		Category cat1 = new Category("Alohaa", null);
 		int hash1 = cat1.hashCode();
 
 		assertFalse(hash == hash1);
@@ -68,7 +60,7 @@ public class CategoryTest {
 		assertFalse(cat.equals("Aloha"));
 		
 		cat1.setName("Aloha");
-		cat1.setParent(2L);
+		cat1.setParent(new Category("una", null));
 		assertFalse(Objects.equals(cat, cat1));
 		
 		cat1.setId(2L);
@@ -78,12 +70,21 @@ public class CategoryTest {
 	
 	@Test
 	public void testToString() {
-		Category cat = new Category("Aloha", 1L);
+		Category cat = new Category("Aloha", new Category("meh", null));
 		String stringForm = cat.toString();
 		
 		String idString = cat.getId() == null ? "null" : cat.getId().toString();
 		assertTrue(stringForm.contains(idString));
 		assertTrue(stringForm.contains(cat.getParent().toString()));
 		assertTrue(stringForm.contains(cat.getName()));
+	}
+	
+	
+	private Category createFullCategory() {
+		Category parent = new Category("one", null);
+		parent.addChildrenLocal(new Category("meh", parent), new Category("beh", parent));
+
+		
+		return parent;
 	}
 }

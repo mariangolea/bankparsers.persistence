@@ -1,4 +1,4 @@
-package org.mariangolea.fintrack.bank.parser.persistence.transactions;
+package org.mariangolea.fintrack.bank.parser.persistence.transaction;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -18,6 +18,10 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
 
+import org.mariangolea.fintrack.bank.parser.persistence.FintrackEntityBase;
+import org.mariangolea.fintrack.bank.transaction.BankTransactionInterface;
+import org.mariangolea.fintrack.bank.transaction.BankTransactionTextInterface;
+
 /**
  * Container of parsed and raw csv data for any transaction. <br>
  * Instances of this class will always contain data read directly from CSV
@@ -25,14 +29,9 @@ import javax.persistence.Transient;
  */
 @Entity
 @Table(name = "transactions")
-public class BankTransaction implements Serializable, Comparable<BankTransaction> {
+public class BankTransaction extends FintrackEntityBase implements Serializable, BankTransactionInterface {
 
 	private static final long serialVersionUID = 3176537482173332346L;
-
-	static final String LINE_DELIMITER = "\n";
-	static final BigDecimal DEFAULT_AMOUNT = BigDecimal.ZERO;
-	static final int SHORT_DESCRIPTION_SIZE = 20;
-	static final int MAX_DESCRIPTION_LENGTH = 1000;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -66,8 +65,20 @@ public class BankTransaction implements Serializable, Comparable<BankTransaction
 	public BankTransaction() {
 		started = adjustDate(null);
 		completed = adjustDate(null);
-		creditAmount = adjustAmount(null, DEFAULT_AMOUNT);
-		debitAmount = adjustAmount(null, DEFAULT_AMOUNT);
+		creditAmount = adjustAmount(null);
+		debitAmount = adjustAmount(null);
+		originalContent = new BankTransactionText();
+	}
+
+	BankTransaction(BankTransactionInterface transaction) {
+		this();
+		if (transaction != null) {
+			started = adjustDate(transaction.getStartDate());
+			completed = adjustDate(transaction.getCompletedDate());
+			creditAmount = adjustAmount(transaction.getCreditAmount());
+			debitAmount = adjustAmount(transaction.getDebitAmount());
+			originalContent = new BankTransactionText(transaction.getOriginalContent());
+		}
 	}
 
 	public BankTransaction(final BankTransactionText originalContent) {
@@ -112,13 +123,13 @@ public class BankTransaction implements Serializable, Comparable<BankTransaction
 	 * Support only for ordering purposes: by date, and then by description.
 	 */
 	@Override
-	public int compareTo(final BankTransaction o) {
-		int result = completed.compareTo(o.completed);
+	public int compareTo(final BankTransactionInterface o) {
+		int result = completed.compareTo(o.getCompletedDate());
 		if (result == 0) {
 			if (description == null) {
-				result = o.description == null ? 0 : -1;
+				result = o.getDescription() == null ? 0 : -1;
 			} else {
-				result = o.description == null ? 1 : description.compareTo(o.description);
+				result = o.getDescription() == null ? 1 : description.compareTo(o.getDescription());
 			}
 		}
 
@@ -182,11 +193,11 @@ public class BankTransaction implements Serializable, Comparable<BankTransaction
 	}
 
 	public void setCreditAmount(BigDecimal creditAmount) {
-		this.creditAmount = adjustAmount(creditAmount, DEFAULT_AMOUNT);
+		this.creditAmount = adjustAmount(creditAmount);
 	}
 
 	public void setDebitAmount(BigDecimal debitAmount) {
-		this.debitAmount = adjustAmount(debitAmount, DEFAULT_AMOUNT);
+		this.debitAmount = adjustAmount(debitAmount);
 	}
 
 	public void setDescription(String description) {
@@ -197,24 +208,12 @@ public class BankTransaction implements Serializable, Comparable<BankTransaction
 		this.originalContent = Objects.requireNonNull(originalContent);
 	}
 
+	@Override
+	public void setOriginalContent(BankTransactionTextInterface originalContent) {
+		this.originalContent = new BankTransactionText(Objects.requireNonNull(originalContent).getOriginalContent());
+	}
+
 	public void setContentLines(int contentLines) {
 		this.contentLines = contentLines;
 	}
-
-	private String adjustString(String input, int maxLength) {
-		if (input == null || input.length() <= maxLength) {
-			return input;
-		}
-
-		return input.substring(0, maxLength);
-	}
-
-	private BigDecimal adjustAmount(BigDecimal amount, BigDecimal defaultValue) {
-		return amount == null ? defaultValue : amount.abs();
-	}
-
-	private Date adjustDate(Date date) {
-		return date == null ? new Date() : date;
-	}
-
 }
