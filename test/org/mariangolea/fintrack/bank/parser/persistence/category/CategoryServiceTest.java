@@ -26,19 +26,14 @@ public class CategoryServiceTest extends BaseDataJPATest {
 
 	@Test
 	public void testGetTopMostCategories() {
-		Category toAdd = new Category();
-		toAdd.setName("AlohaParent");
-		categoriesRepo.save(toAdd);
-		Category parent = toAdd;
+		Category parent1 = new Category("AlohaParent", null);
+		categoriesRepo.save(parent1);
+		
+		Category parent2 = new Category("AlohaParent 2", null);
+		categoriesRepo.save(parent2);
 
-		toAdd = new Category();
-		toAdd.setName("AlohaParent 2");
-		categoriesRepo.save(toAdd);
-
-		toAdd = new Category();
-		toAdd.setName("Aloha");
-		toAdd.setParent(parent);
-		categoriesRepo.save(toAdd);
+		Category kid = new Category("Aloha", parent1);
+		categoriesRepo.save(kid);
 
 		Collection<CategoryInterface> topMost = categoriesService.getTopMostCategories();
 		assertNotNull(topMost);
@@ -47,32 +42,27 @@ public class CategoryServiceTest extends BaseDataJPATest {
 
 	@Test
 	public void testRemoveCategory() {
-		Category toAdd = new Category("Aloha GrandParent", null);
-		categoriesRepo.save(toAdd);
-		Category grandParent = toAdd;
+		Category grandParent = new Category("Aloha GrandParent", null);
+		categoriesRepo.save(grandParent);
 
-		toAdd = new Category("Aloha Parent", grandParent);
-		Category parent = toAdd;
-		categoriesRepo.save(toAdd);
+		Category parent = new Category("Aloha Parent", grandParent);
+		categoriesRepo.save(parent);
 
-		toAdd = new Category("Aloha", parent);
-		categoriesRepo.save(toAdd);
-		Category child = toAdd;
-		parent.addChildrenLocal(toAdd);
-		grandParent.addChildrenLocal(parent);
+		Category child = new Category("Aloha", parent);
+		categoriesRepo.save(child);
 
 		boolean success = categoriesService.removeCategory("Aloha Parent");
 		assertTrue(success);
-		toAdd = categoriesRepo.findByName("Aloha Parent");
-		assertNull(toAdd);
-		toAdd = categoriesRepo.findByName("Aloha");
-		assertEquals(grandParent, toAdd.getParent());
+		Category found = categoriesRepo.findByName("Aloha Parent");
+		assertNull(found);
+		found = categoriesRepo.findByName("Aloha");
+		assertEquals(grandParent, found.getParent());
 
 		success = categoriesService.removeCategory("Aloha GrandParent");
 		assertTrue(success);
-		toAdd = categoriesRepo.findByName("Aloha GrandParent");
-		assertNull(toAdd);
-		toAdd = categoriesRepo.findByName("Aloha");
-		assertEquals(null, toAdd.getParent());
+		found = categoriesRepo.findByName("Aloha GrandParent");
+		assertNull(found);
+		found = categoriesRepo.findByName("Aloha");
+		assertEquals(null, found.getParent());
 	}
 }
