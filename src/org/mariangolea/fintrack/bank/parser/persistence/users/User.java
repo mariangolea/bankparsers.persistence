@@ -13,9 +13,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.mariangolea.fintrack.bank.parser.persistence.FintrackEntityBase;
+import org.mariangolea.fintrack.user.UserInterface;
+import org.mariangolea.fintrack.user.UserPreferencesInterface;
+
 @Entity
 @Table(name = "users")
-public class User implements Serializable {
+public class User extends FintrackEntityBase implements Serializable, UserInterface {
 
 	private static final long serialVersionUID = 3696724292592234147L;
 
@@ -24,10 +28,10 @@ public class User implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "user_name")
+    @Column(name = "user_name", nullable = false)
     private String name;
 
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     private String password;
 
     @JoinColumn(name = "preferences_id")
@@ -39,8 +43,8 @@ public class User implements Serializable {
     }
 
     public User(String name, String password, UserPreferences preferences) {
-        this.name = adjustString(name);
-        this.password = adjustString(password);
+        this.name = adjustString(name, 250, "");
+        this.password = adjustString(password, 250, "");
         this.preferences = preferences;
     }
 
@@ -49,7 +53,7 @@ public class User implements Serializable {
     }
 
     public void setName(String name) {
-        this.name = adjustString(name);
+        this.name = adjustString(name, 250, "");
     }
 
     public String getPassword() {
@@ -57,7 +61,7 @@ public class User implements Serializable {
     }
 
     public void setPassword(String password) {
-        this.password = adjustString(password);
+        this.password = adjustString(password, 250, "");
     }
 
     public UserPreferences getPreferences() {
@@ -111,7 +115,9 @@ public class User implements Serializable {
         return "User{" + "name=" + name + ", password=" + password + ", preferences=" + preferences + '}';
     }
     
-    private String adjustString(String input) {
-    	return input == null ? "" : input;
-    }
+	@Override
+	public void setPreferences(UserPreferencesInterface preferences) {
+		this.preferences = new UserPreferences(preferences);
+		
+	}
 }

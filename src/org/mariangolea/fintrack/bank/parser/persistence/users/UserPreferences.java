@@ -10,9 +10,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.mariangolea.fintrack.bank.parser.persistence.FintrackEntityBase;
+import org.mariangolea.fintrack.user.UserPreferencesInterface;
+
 @Entity
 @Table(name = "userpreferences")
-public class UserPreferences implements Serializable {
+public class UserPreferences extends FintrackEntityBase implements Serializable, UserPreferencesInterface {
 
 	private static final long serialVersionUID = 4737913401569904628L;
 
@@ -36,7 +39,17 @@ public class UserPreferences implements Serializable {
 
 	public UserPreferences(Integer timeFrameInterval, String inputFolder, Integer pageSize) {
 		this.timeFrameInterval = adjustInteger(timeFrameInterval, 1);
-		this.inputFolder = adjustString(inputFolder);
+		this.inputFolder = adjustString(inputFolder,250, "");
+		this.pageSize = adjustInteger(pageSize, 50);
+	}
+	
+	public UserPreferences(UserPreferencesInterface preferences) {
+		this.timeFrameInterval = preferences == null ? null : preferences.getTimeFrameInterval();
+		this.inputFolder = preferences == null ? null : preferences.getInputFolder();
+		this.pageSize = preferences == null ? null : preferences.getPageSize();
+		
+		this.timeFrameInterval = adjustInteger(timeFrameInterval, 1);
+		this.inputFolder = adjustString(inputFolder,250, "");
 		this.pageSize = adjustInteger(pageSize, 50);
 	}
 
@@ -53,7 +66,7 @@ public class UserPreferences implements Serializable {
 	}
 
 	public void setInputFolder(String inputFolder) {
-		this.inputFolder = adjustString(inputFolder);
+		this.inputFolder = adjustString(inputFolder,250, "");
 	}
 
 	public Long getId() {
@@ -90,13 +103,5 @@ public class UserPreferences implements Serializable {
 	public String toString() {
 		return "UserPreferences{" + "timeFrameInterval=" + timeFrameInterval + ", inputFolder=" + inputFolder
 				+ ", pageSize=" + pageSize + '}';
-	}
-
-	private Integer adjustInteger(Integer value, Integer defaultValue) {
-		return value == null ? defaultValue : value;
-	}
-	
-	private String adjustString(String value) {
-		return value == null ? "" : value;
 	}
 }
