@@ -30,28 +30,32 @@ public class CategoriesService extends FintrackEntityBase {
 	 * change their parent to the parent of the category to be removed. <br>
 	 * We're just eliminating one artificial grouping of several categories, so they
 	 * are available to the higher parent.
-	 * 
-	 * @param parentCategory
-	 * @param category
+	 *
+	 * @param categoryName
 	 * @return false if category was not found
 	 */
 	public boolean removeCategory(final String categoryName) {
-		Category toRemove = categoriesRepo.findByName(categoryName);
-		if (toRemove == null) {
+		Category parentToRemove = categoriesRepo.findByName(categoryName);
+		if (parentToRemove == null) {
 			return false;
 		}
 
-		Category parent = toRemove.getParent();
+		Category grandParent = parentToRemove.getParent();
 
-		Collection<Category> children = toRemove.getChildrenLocal();
+		Collection<Category> children = parentToRemove.getChildrenLocal();
 		if (children != null && !children.isEmpty()) {
 			for (Category child : children) {
-				child.setParent(parent);
+				child.setParent(grandParent);
 			}
 			categoriesRepo.saveAll(children);
+
+			if (grandParent != null) {
+				children.forEach(grandParent::addChildrenLocal);
+				categoriesRepo.save(grandParent);
+			}
 		}
 
-		categoriesRepo.deleteById(toRemove.getId());
+		categoriesRepo.deleteById(parentToRemove.getId());
 
 		return true;
 	}

@@ -1,7 +1,7 @@
 package org.mariangolea.fintrack.bank.parser.persistence.category;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -47,32 +47,33 @@ public class CategoryServiceTest extends BaseDataJPATest {
 
 	@Test
 	public void testRemoveCategory() {
-		Category toAdd = new Category("Aloha GrandParent", null);
-		categoriesRepo.save(toAdd);
-		Category grandParent = toAdd;
+		Category grandParent = new Category("Aloha GrandParent", null);
+		categoriesRepo.save(grandParent);
 
-		toAdd = new Category("Aloha Parent", grandParent);
-		Category parent = toAdd;
-		categoriesRepo.save(toAdd);
+		Category parent = new Category("Aloha Parent", grandParent);
+		categoriesRepo.save(parent);
 
-		toAdd = new Category("Aloha", parent);
-		categoriesRepo.save(toAdd);
-		Category child = toAdd;
-		parent.addChildrenLocal(toAdd);
-		grandParent.addChildrenLocal(parent);
+		Category child = new Category("Aloha", parent);
+		categoriesRepo.save(child);
+		parent.addChildrenLocal(child);
+// aici e dubios, ca ai adaugat la parent pe child, dar il adaugi pe child si la grandparent.
+// nu cred ca merge, ai un singur parent_id, ce valoare sa ia, al parent sau al grand parent?
+//		grandParent.addChildrenLocal(parent);
 
-		boolean success = categoriesService.removeCategory("Aloha Parent");
-		assertTrue(success);
-		toAdd = categoriesRepo.findByName("Aloha Parent");
-		assertNull(toAdd);
-		toAdd = categoriesRepo.findByName("Aloha");
-		assertEquals(grandParent, toAdd.getParent());
+		assertTrue(categoriesService.removeCategory("Aloha Parent"));
 
-		success = categoriesService.removeCategory("Aloha GrandParent");
-		assertTrue(success);
-		toAdd = categoriesRepo.findByName("Aloha GrandParent");
-		assertNull(toAdd);
-		toAdd = categoriesRepo.findByName("Aloha");
-		assertEquals(null, toAdd.getParent());
+		Category foundParent = categoriesRepo.findByName("Aloha Parent");
+		assertNull(foundParent);
+
+		Category foundChild = categoriesRepo.findByName("Aloha");
+		assertEquals(grandParent, foundChild.getParent());
+
+		assertTrue(categoriesService.removeCategory("Aloha GrandParent"));
+
+		Category foundGrandParent = categoriesRepo.findByName("Aloha GrandParent");
+		assertNull(foundGrandParent);
+
+		foundChild = categoriesRepo.findByName("Aloha");
+		assertNull(foundChild.getParent());
 	}
 }
