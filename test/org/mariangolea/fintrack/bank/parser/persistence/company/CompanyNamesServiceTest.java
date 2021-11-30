@@ -1,4 +1,4 @@
-package org.mariangolea.fintrack.bank.parser.persistence.companies;
+package org.mariangolea.fintrack.bank.parser.persistence.company;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -12,11 +12,8 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.mariangolea.fintrack.bank.parser.persistence.BaseDataJPATest;
-import org.mariangolea.fintrack.bank.parser.persistence.company.CompanyIdentifier;
-import org.mariangolea.fintrack.bank.parser.persistence.company.CompanyIdentifierRepository;
-import org.mariangolea.fintrack.bank.parser.persistence.company.CompanyName;
-import org.mariangolea.fintrack.bank.parser.persistence.company.CompanyNameRepository;
-import org.mariangolea.fintrack.bank.parser.persistence.company.CompanyNamesService;
+import org.mariangolea.fintrack.company.CompanyIdentifierInterface;
+import org.mariangolea.fintrack.company.CompanyInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.test.context.ContextConfiguration;
@@ -36,16 +33,16 @@ public class CompanyNamesServiceTest extends BaseDataJPATest {
 
 	@Test
 	public void testGetAllCompanyIdentifierStrings() {
-		Collection<CompanyIdentifier> preexisting = service.getAllCompanyIdentifierStrings();
+		Collection<CompanyIdentifierInterface> preexisting = service.getAllCompanyIdentifierStrings();
 		assertNotNull(preexisting);
 		assertTrue(preexisting.isEmpty());
 
 		CompanyIdentifier toAdd = new CompanyIdentifier();
-		toAdd.setName("AlohaParent");
+		toAdd.setText("AlohaParent");
 		idRepo.save(toAdd);
 
 		toAdd = new CompanyIdentifier();
-		toAdd.setName("Aloha");
+		toAdd.setText("Aloha");
 		idRepo.save(toAdd);
 
 		preexisting = service.getAllCompanyIdentifierStrings();
@@ -55,16 +52,16 @@ public class CompanyNamesServiceTest extends BaseDataJPATest {
 
 	@Test
 	public void testGetCompanyIdentifierStrings() {
-		Collection<CompanyIdentifier> preexisting = service.getCompanyIdentifierStrings("Aloha");
+		Collection<CompanyIdentifierInterface> preexisting = service.getCompanyIdentifierStrings("Aloha");
 		assertNotNull(preexisting);
 		assertTrue(preexisting.isEmpty());
 
 		CompanyIdentifier toAdd = new CompanyIdentifier();
-		toAdd.setName("AlohaParent");
+		toAdd.setText("AlohaParent");
 		idRepo.save(toAdd);
 
 		toAdd = new CompanyIdentifier();
-		toAdd.setName("Aloha");
+		toAdd.setText("Aloha");
 		idRepo.save(toAdd);
 
 		preexisting = service.getAllCompanyIdentifierStrings();
@@ -74,16 +71,16 @@ public class CompanyNamesServiceTest extends BaseDataJPATest {
 
 	@Test
 	public void testGetMatchingIdentifierStrings() {
-		Collection<CompanyIdentifier> preexisting = service.getMatchingIdentifierStrings("Aloha");
+		Collection<CompanyIdentifierInterface> preexisting = service.getMatchingIdentifierStrings("Aloha");
 		assertNotNull(preexisting);
 		assertTrue(preexisting.isEmpty());
 
 		CompanyIdentifier toAdd = new CompanyIdentifier();
-		toAdd.setName("AlohaParent");
+		toAdd.setText("AlohaParent");
 		idRepo.save(toAdd);
 
 		toAdd = new CompanyIdentifier();
-		toAdd.setName("Meloha");
+		toAdd.setText("Meloha");
 		idRepo.save(toAdd);
 
 		// one transaction will most likely only have one single company identifier
@@ -101,12 +98,12 @@ public class CompanyNamesServiceTest extends BaseDataJPATest {
 		CompanyName name = new CompanyName();
 		name.setName("Aloha");
 		CompanyIdentifier toAdd = new CompanyIdentifier();
-		toAdd.setName("Aloha Identifier");
+		toAdd.setText("Aloha Identifier");
 		toAdd.setCompanyName(name);
 		idRepo.save(toAdd);
 		Collection<CompanyIdentifier> identifiers = new ArrayList<>();
 		identifiers.add(toAdd);
-		name.setIdentifiers(identifiers);
+		name.setIdentifiersLocal(identifiers);
 		namesRepo.save(name);
 
 		preexisting = service.getCompanyDisplayName("Aloha Identifier");
@@ -116,16 +113,14 @@ public class CompanyNamesServiceTest extends BaseDataJPATest {
 
 	@Test
 	public void testGeCompanyDisplayNames() {
-		Collection<CompanyName> preexisting = service.getCompanyDisplayNames();
+		Collection<CompanyInterface> preexisting = service.getCompanyDisplayNames();
 		assertNotNull(preexisting);
 		assertTrue(preexisting.isEmpty());
 
-		CompanyName name = new CompanyName();
-		name.setName("Aloha");
+		CompanyName name = new CompanyName("Aloha");
 		namesRepo.save(name);
 
-		name = new CompanyName();
-		name.setName("Beloha");
+		name = new CompanyName("Beloha");
 		namesRepo.save(name);
 
 		preexisting = service.getCompanyDisplayNames();
@@ -135,68 +130,62 @@ public class CompanyNamesServiceTest extends BaseDataJPATest {
 
 	@Test
 	public void testDeleteCompanyName() {
-		CompanyName name = new CompanyName();
-		name.setName("Aloha");
+		CompanyName name = new CompanyName("Aloha");
 		namesRepo.save(name);
 
 		service.deleteCompanyName(name);
 
-		name = new CompanyName();
-		name.setName("Aloha");
+		name = new CompanyName("Aloha");
 		Optional<CompanyName> notFound = namesRepo.findOne(Example.of(new CompanyName()));
 		assertFalse(notFound.isPresent());
 	}
 
 	@Test
 	public void testEditCompanyName() {
-		CompanyName name = new CompanyName();
-		name.setName("Aloha");
+		CompanyName name = new CompanyName("Aloha");
 		namesRepo.save(name);
 
 		service.editCompanyName("Aloha", "Behe");
 
-		name = new CompanyName();
-		name.setName("Behe");
+		name = new CompanyName("Behe");
 		Optional<CompanyName> notFound = namesRepo.findOne(Example.of(new CompanyName()));
 		assertTrue(notFound.isPresent());
 	}
 
 	@Test
 	public void testEditCompanyIdentifier() {
-		CompanyName name = new CompanyName();
-		name.setName("Aloha");
+		CompanyName name = new CompanyName("Aloha");
 		CompanyIdentifier toAdd = new CompanyIdentifier();
-		toAdd.setName("Aloha Identifier");
+		toAdd.setText("Aloha Identifier");
 		toAdd.setCompanyName(name);
 		idRepo.save(toAdd);
 		Collection<CompanyIdentifier> identifiers = new ArrayList<>();
 		identifiers.add(toAdd);
-		name.setIdentifiers(identifiers);
+		name.setIdentifiersLocal(identifiers);
 		namesRepo.save(name);
 
 		service.editCompanyIdentifier("Aloha Identifier", "Bermuda");
 
 		toAdd = new CompanyIdentifier();
-		toAdd.setName("Bermuda");
+		toAdd.setText("Bermuda");
 		Optional<CompanyIdentifier> notFound = idRepo.findOne(Example.of(toAdd));
 		assertTrue(notFound.isPresent());
 	}
 
 	@Test
 	public void testResetCompanyIdentifierStrings() {
-		CompanyName name = new CompanyName();
-		name.setName("Aloha");
-		Collection<CompanyIdentifier> identifiers = new ArrayList<>();
+		CompanyName name = new CompanyName("Aloha");
+		Collection<CompanyIdentifierInterface> identifiers = new ArrayList<>();
 		name.setIdentifiers(identifiers);
 
 		CompanyIdentifier toAdd = new CompanyIdentifier();
-		toAdd.setName("Aloha Identifier");
+		toAdd.setText("Aloha Identifier");
 		toAdd.setCompanyName(name);
 		identifiers.add(toAdd);
 		idRepo.save(toAdd);
 
 		toAdd = new CompanyIdentifier();
-		toAdd.setName("Aloha Identifier 33");
+		toAdd.setText("Aloha Identifier 33");
 		toAdd.setCompanyName(name);
 		identifiers.add(toAdd);
 		idRepo.save(toAdd);
@@ -205,27 +194,24 @@ public class CompanyNamesServiceTest extends BaseDataJPATest {
 
 		identifiers = new ArrayList<>();
 		toAdd = new CompanyIdentifier();
-		toAdd.setName("Beta");
+		toAdd.setText("Beta");
 		toAdd.setCompanyName(name);
 		identifiers.add(toAdd);
 		idRepo.save(toAdd);
 
 		toAdd = new CompanyIdentifier();
-		toAdd.setName("Delta");
+		toAdd.setText("Delta");
 		toAdd.setCompanyName(name);
 		identifiers.add(toAdd);
 		idRepo.save(toAdd);
 
 		service.resetCompanyIdentifierStrings("Aloha", identifiers);
 
-		name = new CompanyName();
-		name.setName("Aloha");
-		Optional<CompanyName> found = namesRepo.findOne(Example.of(new CompanyName()));
-		assertTrue(found.isPresent());
-		name = found.get();
-		assertEquals(2, name.getIdentifiers().size());
-		for (CompanyIdentifier id : name.getIdentifiers()) {
-			switch (id.getName()) {
+		CompanyName found = get(namesRepo.findOne(Example.of(new CompanyName("Aloha"))));
+		assertNotNull(found);
+		assertEquals(2, found.getIdentifiers().size());
+		for (CompanyIdentifierInterface id : found.getIdentifiers()) {
+			switch (id.getText()) {
 			case "Beta":
 			case "Delta":
 				break;
@@ -241,8 +227,7 @@ public class CompanyNamesServiceTest extends BaseDataJPATest {
 		boolean preexisting = service.hasCompanyDisplayName("Aloha");
 		assertTrue(!preexisting);
 		
-		CompanyName name = new CompanyName();
-		name.setName("Aloha");
+		CompanyName name = new CompanyName("Aloha");
 		namesRepo.save(name);
 		
 		preexisting = service.hasCompanyDisplayName("Aloha");

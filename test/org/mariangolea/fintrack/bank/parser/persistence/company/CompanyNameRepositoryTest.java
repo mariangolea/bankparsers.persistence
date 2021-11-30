@@ -1,4 +1,4 @@
-package org.mariangolea.fintrack.bank.parser.persistence.companies;
+package org.mariangolea.fintrack.bank.parser.persistence.company;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -8,8 +8,6 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.mariangolea.fintrack.bank.parser.persistence.BaseDataJPATest;
-import org.mariangolea.fintrack.bank.parser.persistence.company.CompanyName;
-import org.mariangolea.fintrack.bank.parser.persistence.company.CompanyNameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.test.context.ContextConfiguration;

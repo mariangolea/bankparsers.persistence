@@ -1,7 +1,11 @@
 package org.mariangolea.fintrack.bank.parser.persistence;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 public class FintrackEntityBase {
@@ -40,5 +44,18 @@ public class FintrackEntityBase {
 			return null;
 		}
 		return optional.get();
+	}
+	
+	protected <A, E extends A> Collection<A> toInterface(Collection<E> actual) {
+		if (actual == null || actual.isEmpty()) {
+			return Collections.emptyList();
+		}
+
+		List<A> identifiers = new ArrayList<>();
+		for (E originalObject : actual) {
+			identifiers.add(originalObject);
+		}
+		
+		return identifiers;
 	}
 }

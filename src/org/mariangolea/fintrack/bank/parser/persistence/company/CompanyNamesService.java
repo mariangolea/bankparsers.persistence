@@ -3,15 +3,17 @@ package org.mariangolea.fintrack.bank.parser.persistence.company;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
+import org.mariangolea.fintrack.bank.parser.persistence.FintrackEntityBase;
+import org.mariangolea.fintrack.company.CompanyIdentifierInterface;
+import org.mariangolea.fintrack.company.CompanyInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CompanyNamesService {
+public class CompanyNamesService extends FintrackEntityBase {
 
 	@Autowired
 	private CompanyNameRepository companyNamesRepo;
@@ -19,8 +21,8 @@ public class CompanyNamesService {
 	@Autowired
 	private CompanyIdentifierRepository companyIdentifiersRepo;
 
-	public Collection<CompanyIdentifier> getAllCompanyIdentifierStrings() {
-		return companyIdentifiersRepo.findAll();
+	public Collection<CompanyIdentifierInterface> getAllCompanyIdentifierStrings() {
+		return toInterface(companyIdentifiersRepo.findAll());
 	}
 
 	/**
@@ -28,26 +30,25 @@ public class CompanyNamesService {
 	 * 
 	 * @param companyDisplayName company name
 	 */
-	public Collection<CompanyIdentifier> getCompanyIdentifierStrings(final String companyDisplayName) {
-		CompanyName sample = new CompanyName();
-		sample.setName(companyDisplayName);
-		Optional<CompanyName> match = companyNamesRepo.findOne(Example.of(sample));
-		return !match.isPresent() ? Collections.emptyList() : match.get().getIdentifiers();
+	public Collection<CompanyIdentifierInterface> getCompanyIdentifierStrings(final String companyDisplayName) {
+		CompanyName sample = new CompanyName(companyDisplayName);
+		CompanyName match = get(companyNamesRepo.findOne(Example.of(sample)));
+		return match == null ? Collections.emptyList() : match.getIdentifiers();
 	}
 
 	/**
-	 * Get the list of recognized company identifier strings that are found within a
+	 * Get the list of recognised company identifier strings that are found within a
 	 * specific transaction description.
 	 * 
 	 * @param transactionDescription transaction description string, which contains
 	 *                               potentially known company identifier strings
 	 */
-	public Collection<CompanyIdentifier> getMatchingIdentifierStrings(final String transactionDescription) {
-		List<CompanyIdentifier> identifiers = companyIdentifiersRepo.findAll();
-		Collection<CompanyIdentifier> matching = new ArrayList<>();
+	public Collection<CompanyIdentifierInterface> getMatchingIdentifierStrings(final String transactionDescription) {
+		Collection<CompanyIdentifierInterface> identifiers = toInterface(companyIdentifiersRepo.findAll());
+		Collection<CompanyIdentifierInterface> matching = new ArrayList<>();
 		identifiers.forEach(identifier -> {
 			String lower1 = transactionDescription.toLowerCase();
-			String lower2 = identifier.getName().toLowerCase();
+			String lower2 = identifier.getText().toLowerCase();
 			if (lower1.contains(lower2)) {
 				matching.add(identifier);
 			}
@@ -63,13 +64,13 @@ public class CompanyNamesService {
 	 */
 	public String getCompanyDisplayName(final String companyIdentifier) {
 		CompanyIdentifier sample = new CompanyIdentifier();
-		sample.setName(companyIdentifier);
+		sample.setText(companyIdentifier);
 		Optional<CompanyIdentifier> match = companyIdentifiersRepo.findOne(Example.of(sample));
 		return !match.isPresent() ? null : match.get().getCompanyName().getName();
 	}
 
-	public Collection<CompanyName> getCompanyDisplayNames() {
-		return companyNamesRepo.findAll();
+	public Collection<CompanyInterface> getCompanyDisplayNames() {
+		return toInterface(companyNamesRepo.findAll());
 	}
 
 	public void deleteCompanyName(final CompanyName company) {
@@ -77,9 +78,8 @@ public class CompanyNamesService {
 	}
 
 	public void editCompanyName(final String existingName, final String newName) {
-		CompanyName sample = new CompanyName();
-		sample.setName(existingName);
-		CompanyName company = companyNamesRepo.findOne(Example.of(sample)).orElse(null);
+		CompanyName sample = new CompanyName(existingName);
+		CompanyName company = get(companyNamesRepo.findOne(Example.of(sample)));
 		if (company != null) {
 			company.setName(newName);
 			companyNamesRepo.save(company);
@@ -87,23 +87,33 @@ public class CompanyNamesService {
 	}
 
 	public void editCompanyIdentifier(final String existingIdentifier, final String newIdentifier) {
-		CompanyIdentifier sample = new CompanyIdentifier();
-		sample.setName(existingIdentifier);
+		CompanyIdentifier sample = new CompanyIdentifier(existingIdentifier);
 		CompanyIdentifier target = companyIdentifiersRepo.findOne(Example.of(sample)).orElse(null);
 		if (target != null) {
-			target.setName(newIdentifier);
+			target.setText(newIdentifier);
 			companyIdentifiersRepo.save(target);
 		}
 	}
 
 	public void resetCompanyIdentifierStrings(final String displayName,
-			final Collection<CompanyIdentifier> newIdentifiers) {
-		CompanyName sample = new CompanyName();
-		sample.setName(displayName);
-		CompanyName company = companyNamesRepo.findOne(Example.of(sample)).orElse(null);
+			final Collection<CompanyIdentifierInterface> newIdentifiers) {
+		//make sure database contains identifiers not previously specified.
+		for (CompanyIdentifierInterface id : newIdentifiers) {
+			CompanyIdentifier identifier = companyIdentifiersRepo.findByText(id.getText()); 
+			if (identifier == null) {
+				companyIdentifiersRepo.save(new CompanyIdentifier(id.getText()));
+			}
+		}
+		
+		CompanyName sample = new CompanyName(displayName);
+		CompanyName company = get(companyNamesRepo.findOne(Example.of(sample)));
 		if (company != null) {
-			company.getIdentifiers().clear();
-			company.getIdentifiers().addAll(newIdentifiers);
+			Collection<CompanyIdentifier> identifiers = company.getIdentifiersLocal();
+			identifiers.clear();
+			for (CompanyIdentifierInterface interfaced : newIdentifiers) {
+				CompanyIdentifier id = get(companyIdentifiersRepo.findOne(Example.of(new CompanyIdentifier(interfaced))));
+				identifiers.add(id);
+			}
 			companyNamesRepo.save(company);
 		}
 	}

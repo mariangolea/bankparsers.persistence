@@ -1,4 +1,4 @@
-package org.mariangolea.fintrack.bank.parser.persistence.companies;
+package org.mariangolea.fintrack.bank.parser.persistence.company;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Objects;
 
 import org.junit.jupiter.api.Test;
-import org.mariangolea.fintrack.bank.parser.persistence.company.CompanyIdentifier;
-import org.mariangolea.fintrack.bank.parser.persistence.company.CompanyName;
 
 public class CompanyNameTest {
 	@Test
@@ -18,45 +16,32 @@ public class CompanyNameTest {
 		CompanyName temp = null;
 		try {
 			temp = new CompanyName();
+			temp = new CompanyName(null, null);
 		} catch (Exception e) {
 			assertTrue(false);
-		}
-
-		try {
-			temp = new CompanyName(null, null, null);
-			assertTrue(false);
-		} catch (Exception e) {
-			assertTrue(true);
 		}
 
 		List<CompanyIdentifier> list = null;
 		try {
-			temp = new CompanyName(null, "Aloha", null);
+			temp = new CompanyName("Aloha", null);
 			list = new ArrayList<>();
 			list.add(new CompanyIdentifier("Ab", temp));
-			temp = new CompanyName(null, "Aloha",list);
+			temp = new CompanyName("Aloha", list);
 		} catch (Exception e) {
 			assertTrue(false);
 		}
 
 		assertEquals("Aloha", temp.getName());
-		assertEquals("Ab", temp.getIdentifiers().iterator().next().getName());
+		assertEquals("Ab", temp.getIdentifiers().iterator().next().getText());
 
 		temp.setName("Alohaaa");
 		temp.setId(3L);
 		list.clear();
 		list.add(new CompanyIdentifier("Abb", temp));
-		temp.setIdentifiers(list);
+		temp.setIdentifiersLocal(list);
 		assertEquals("Alohaaa", temp.getName());
 		assertEquals(3L, temp.getId());
-		assertEquals("Abb", temp.getIdentifiers().iterator().next().getName());
-
-		try {
-			temp.setName(null);
-			assertTrue(false);
-		} catch (Exception e) {
-			assertTrue(true);
-		}
+		assertEquals("Abb", temp.getIdentifiers().iterator().next().getText());
 	}
 
 	@Test
@@ -64,10 +49,10 @@ public class CompanyNameTest {
 		List<CompanyIdentifier> list = null;
 		list = new ArrayList<>();
 		list.add(new CompanyIdentifier("Ab", null));
-		CompanyName cat = new CompanyName(null, "Aloha",list);
+		CompanyName cat = new CompanyName("Aloha", list);
 		int hash = cat.hashCode();
 
-		CompanyName cat1 = new CompanyName(null, "Aloha", null);
+		CompanyName cat1 = new CompanyName("Aloha", null);
 		int hash1 = cat1.hashCode();
 
 		assertFalse(hash == hash1);
@@ -84,7 +69,7 @@ public class CompanyNameTest {
 		cat.setId(2L);
 		list = new ArrayList<>();
 		list.add(new CompanyIdentifier("Aba", null));
-		cat1.setIdentifiers(list);
+		cat1.setIdentifiersLocal(list);
 		assertFalse(Objects.equals(cat, cat1));
 	}
 
@@ -93,7 +78,7 @@ public class CompanyNameTest {
 		List<CompanyIdentifier> list = null;
 		list = new ArrayList<>();
 		list.add(new CompanyIdentifier("Ab", null));
-		CompanyName cat = new CompanyName(null, "Aloha",list);
+		CompanyName cat = new CompanyName("Aloha", list);
 		String stringForm = cat.toString();
 
 		String idString = cat.getId() == null ? "null" : cat.getId().toString();
