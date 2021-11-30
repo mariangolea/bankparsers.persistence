@@ -1,8 +1,8 @@
 package org.mariangolea.fintrack.bank.parser.persistence.category;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
@@ -26,19 +26,14 @@ public class CategoryServiceTest extends BaseDataJPATest {
 
 	@Test
 	public void testGetTopMostCategories() {
-		Category toAdd = new Category();
-		toAdd.setName("AlohaParent");
-		categoriesRepo.save(toAdd);
-		Category parent = toAdd;
+		Category parent1 = new Category("AlohaParent", null);
+		categoriesRepo.save(parent1);
+		
+		Category parent2 = new Category("AlohaParent 2", null);
+		categoriesRepo.save(parent2);
 
-		toAdd = new Category();
-		toAdd.setName("AlohaParent 2");
-		categoriesRepo.save(toAdd);
-
-		toAdd = new Category();
-		toAdd.setName("Aloha");
-		toAdd.setParent(parent);
-		categoriesRepo.save(toAdd);
+		Category kid = new Category("Aloha", parent1);
+		categoriesRepo.save(kid);
 
 		Collection<CategoryInterface> topMost = categoriesService.getTopMostCategories();
 		assertNotNull(topMost);
@@ -56,9 +51,6 @@ public class CategoryServiceTest extends BaseDataJPATest {
 		Category child = new Category("Aloha", parent);
 		categoriesRepo.save(child);
 		parent.addChildrenLocal(child);
-// aici e dubios, ca ai adaugat la parent pe child, dar il adaugi pe child si la grandparent.
-// nu cred ca merge, ai un singur parent_id, ce valoare sa ia, al parent sau al grand parent?
-//		grandParent.addChildrenLocal(parent);
 
 		assertTrue(categoriesService.removeCategory("Aloha Parent"));
 
